@@ -1,37 +1,38 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adventure game</title>
-    <style>
-        body {
-            background-color: #000000;
-            font-family: Arial, sans-serif;
-        }
-        #game-container {
-            display: none;
-        }
-        #loading-screen {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 24px;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <div if = "game-container" style="text-align: center; margin-top: 50px;">
-    </div>
-    <h4 id = "loading screen">loding...<h4>
-    <script>
-        const gameContainer = document.getElementById('game-container');
-        let loading=true;
-        while (loading) {
-            loadingText = document.getElementById('loading screen');
-            loadingText.style.display = 'white';
-        }
-    </script>
-</body>
+<html>
+    <head>
+        <style>
+            #square{
+                height: 100px;
+                width: 100px;
+                animation:colorChange;
+            }
+            @keyframes colorChange{
+            10%{
+                background-color:red;
+            }   
+            20%{
+                background-color:orange;
+            }
+            
+            40%{
+                background-color:yellow;
+            }
+            
+            50%{
+                background-color:green;
+            }
+            
+            70%{
+                background-color:blue;
+            }
+            
+            100%{
+                background-color:purple;
+            }
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "square"></div>
+    </body>
 </html>
