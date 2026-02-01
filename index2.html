@@ -30,7 +30,7 @@
   <body>
     <center><h1 id = "Score">0</h1></center>
     <center>
-    <button>
+    <button onClick="addScore()">
       <center>
       <h3>
         Click me!
@@ -39,13 +39,11 @@
     </button>
     </center>
     <script>
-     (function(){
       var score=0;
       function addScore(){
         score=score+1
         document.getElementById("Score").innerHTML=score
       }
-      })();
     </script>
       
     </script>
