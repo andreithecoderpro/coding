@@ -1,38 +1,136 @@
+<!doctype html>
 <html>
-    <head>
-        <style>
-            #square{
-                height: 100px;
-                width: 100px;
-                animation:colorChange;
-            }
-            @keyframes colorChange{
-            10%{
-                background-color:red;
-            }   
-            20%{
-                background-color:orange;
-            }
-            
-            40%{
-                background-color:yellow;
-            }
-            
-            50%{
-                background-color:green;
-            }
-            
-            70%{
-                background-color:blue;
-            }
-            
-            100%{
-                background-color:purple;
-            }
-            }
-        </style>
-    </head>
-    <body>
-        <div id = "square"></div>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Interactive Square</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: #f5f5f5;
+        overflow: hidden; /* keep the square inside the viewport */
+      }
+
+      #square {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+
+        /* color animation (runs by default) */
+        animation: colorChange 5s linear infinite;
+
+        /* optional visual polish */
+        border-radius: 6px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      }
+
+      @keyframes colorChange {
+        0%   { background-color: red;    }
+        20%  { background-color: orange; }
+        40%  { background-color: yellow; }
+        60%  { background-color: green;  }
+        80%  { background-color: blue;   }
+        100% { background-color: purple; }
+      }
+
+      /* helper: small instruction text */
+      #hint {
+        position: fixed;
+        left: 12px;
+        bottom: 12px;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="square" tabindex="0" aria-label="movable square"></div>
+    <div id="hint">Use arrow keys (hold to move)</div>
+
+    <script>
+      // Move the square using arrow keys. Hold keys for smooth continuous movement.
+      (function () {
+        const square = document.getElementById('square');
+        const speedPxPerSec = 300; // change to make it faster/slower
+        const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
+
+        // Initial position read from CSS (left/top)
+        let pos = {
+          x: parseFloat(getComputedStyle(square).left) || 0,
+          y: parseFloat(getComputedStyle(square).top) || 0
+        };
+
+        // Keep the square inside the viewport
+        function clampToViewport() {
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          const sw = square.offsetWidth;
+          const sh = square.offsetHeight;
+          pos.x = Math.max(0, Math.min(pos.x, w - sw));
+          pos.y = Math.max(0, Math.min(pos.y, h - sh));
+        }
+
+        // Update square style from pos
+        function applyPos() {
+          square.style.left = pos.x + 'px';
+          square.style.top = pos.y + 'px';
+        }
+
+        // Keyboard handling: remember pressed keys for smooth motion.
+        window.addEventListener('keydown', (e) => {
+          if (e.key in keys) {
+            // prevent arrow keys from scrolling the page
+            e.preventDefault();
+            keys[e.key] = true;
+          }
+        }, { passive: false });
+
+        window.addEventListener('keyup', (e) => {
+          if (e.key in keys) {
+            keys[e.key] = false;
+          }
+        });
+
+        // In case the user clicks the page and focus is lost, we keep moving while keys are held.
+        // But make it convenient: focusing the square allows keyboard focus/interaction.
+        square.addEventListener('click', () => square.focus());
+
+        // Animation loop for smooth movement
+        let last = performance.now();
+        function frame(now) {
+          const dt = (now - last) / 1000; // seconds
+          last = now;
+
+          let moved = false;
+          if (keys.ArrowLeft)  { pos.x -= speedPxPerSec * dt; moved = true; }
+          if (keys.ArrowRight) { pos.x += speedPxPerSec * dt; moved = true; }
+          if (keys.ArrowUp)    { pos.y -= speedPxPerSec * dt; moved = true; }
+          if (keys.ArrowDown)  { pos.y += speedPxPerSec * dt; moved = true; }
+
+          if (moved) {
+            clampToViewport();
+            applyPos();
+          }
+
+          requestAnimationFrame(frame);
+        }
+
+        // Re-clamp on resize so the square doesn't disappear if the window gets smaller.
+        window.addEventListener('resize', clampToViewport);
+
+        // Start
+        clampToViewport();
+        applyPos();
+        requestAnimationFrame(frame);
+      })();
+    </script>
+  </body>
 </html>
